@@ -15,5 +15,8 @@ services:
     build:
       context: .
       dockerfile: UrlShortener/Dockerfile
+    ports:
+       - "5000:8080"
+       - "5001:8081"
     depends_on:
       - sqldata
