@@ -19,6 +19,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(o =>
 
 builder.Services.AddScoped<UrlShorteningService>();
 
+builder.WebHost.UseUrls("https://localhost:5050");
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -73,5 +75,5 @@ app.MapGet("api/{code}", async (string code, ApplicationDbContext dbContext) =>
 });
 
 app.UseHttpsRedirection();
-
+app.UseCors();
 app.Run();

@@ -1,18 +1,19 @@
 version: '3.4'
 
 services:
-  urlshortener:
-    image: ${DOCKER_REGISTRY-}urlshortener
-    build:
-      context: .
-      dockerfile: UrlShortener/Dockerfile
-
-  sqldata:
+ sqldata:
     container_name: sql-server-db
     image: mcr.microsoft.com/mssql/server:latest
-    user: root
     environment:
       - SA_PASSWORD=StrongPassword123!
       - ACCEPT_EULA=Y
     ports:
       - "1433:1433"
+
+ urlshortener:
+    image: ${DOCKER_REGISTRY-}urlshortener
+    build:
+      context: .
+      dockerfile: UrlShortener/Dockerfile
+    depends_on:
+      - sqldata
