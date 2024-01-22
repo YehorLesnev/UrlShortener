@@ -11,12 +11,19 @@ services:
       - "1433:1433"
 
  urlshortener:
-    image: ${DOCKER_REGISTRY-}urlshortener
+    image: yehorlesnevych/urlshortener:latest
     build:
       context: .
       dockerfile: UrlShortener/Dockerfile
+    environment:
+        "ASPNETCORE_Kestrel__Certificates__Default__Password": "StrongPassword123!"
+        "ASPNETCORE_Kestrel__Certificates__Default__Path": "../https/aspnetapp.pfx"
     ports:
        - "5000:8080"
        - "5001:8081"
+    restart: 
+        always
+    volumes:
+        - ~/.aspnet/https:/https
     depends_on:
       - sqldata
