@@ -39,7 +39,7 @@ app.MapPost("api/shorten", async (
     ApplicationDbContext dbContext,
     HttpContext httpContext) =>
 {
-    if (false == Uri.TryCreate(request.Url, UriKind.Absolute, out _))
+    if (false == UlrValidationService.isUrlValid(request.Url, UriKind.Absolute))
     {
         return Results.BadRequest("The specified URL is invalid: " + request.Url);
     }

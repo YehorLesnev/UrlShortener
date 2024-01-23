@@ -11,6 +11,7 @@
         // db context
         private readonly ApplicationDbContext _dbContext;
 
+        // Constructor for DI
         public UrlShorteningService(ApplicationDbContext context)
         {
             this._dbContext = context;
@@ -32,7 +33,7 @@
 
                 string code = new string(codeChars);
 
-                // return if the code is unique
+                // return the code if it is unique
                 if (false == await _dbContext.ShortenedUrls.AnyAsync(s => s.Code == code))
                 {
                     return code;
