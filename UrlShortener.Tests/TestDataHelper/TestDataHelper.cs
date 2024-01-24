@@ -54,5 +54,28 @@ namespace UrlShortener.Tests.TestDataHelper
                     },
             };
         }
+
+        public static List<string> GetValidUrls()
+        {
+            return new List<string>()
+            {
+                "https://www.linkedin.com/in/yehor-lesnevych-130640158/",
+                "https://github.com/YehorLesnev",
+                "http://www.testingmcafeesites.com/",
+                "http://www.testingmcafeesites.com/testreputation_highrisk.html",
+            };
+        }
+
+        public static List<string> GetInvalidUrls()
+        {
+            return new List<string>()
+            {
+                "github.com/YehorLesnev",
+                "www.linkedin.com/in/yehor-lesnevych-130640158/",
+                "invalid",
+                "invalid string",
+                ""
+            };
+        }
     }
 }
