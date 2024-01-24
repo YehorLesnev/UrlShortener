@@ -34,7 +34,7 @@
                 string code = new string(codeChars);
 
                 // return the code if it is unique
-                if (false == await _dbContext.ShortenedUrls.AnyAsync(s => s.Code == code))
+                if (false == await _dbContext.ShortenedUrls.AnyAsync(s => s.Code.Equals(code)))
                 {
                     return code;
                 }

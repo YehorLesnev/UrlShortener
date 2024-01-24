@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using UrlShortener;
 
@@ -11,13 +12,14 @@ using UrlShortener;
 namespace UrlShortener.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240123143728_CollationSet")]
+    partial class CollationSet
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .UseCollation("SQL_Latin1_General_CP1_CS_AS")
                 .HasAnnotation("ProductVersion", "8.0.1")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
@@ -40,8 +42,7 @@ namespace UrlShortener.Migrations
 
                     b.Property<string>("LongUrl")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .UseCollation("SQL_Latin1_General_CP1_CS_AS");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ShortUrl")
                         .IsRequired()

@@ -22,7 +22,14 @@ namespace UrlShortener
             {
                 builder.Property(s => s.Code).HasMaxLength(Constants.Constants.NumberOfCharsInShortLink);
                 builder.HasIndex(s => s.Code).IsUnique();
+
+                builder.Property(s => s.Code).UseCollation("SQL_Latin1_General_CP1_CS_AS");
+                builder.Property(s => s.ShortUrl).UseCollation("SQL_Latin1_General_CP1_CS_AS");
+                builder.Property(s => s.LongUrl).UseCollation("SQL_Latin1_General_CP1_CS_AS");
             });
+
+            // for case sensitivity
+            modelBuilder.UseCollation("SQL_Latin1_General_CP1_CS_AS");
         }
     }
 }

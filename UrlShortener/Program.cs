@@ -1,3 +1,5 @@
+using Azure;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using UrlShortener;
 using UrlShortener.Entities;
@@ -8,9 +10,7 @@ using UrlShortener.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -24,14 +24,11 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    if (app.Environment.IsDevelopment())
-    {
-        app.UseSwagger();
-        app.UseSwaggerUI();
-    }
-
-    app.ApplyMigrations();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
+
+app.ApplyMigrations();
 
 app.MapPost("api/shorten", async (
     ShortenUrlRequest request,
@@ -39,7 +36,7 @@ app.MapPost("api/shorten", async (
     ApplicationDbContext dbContext,
     HttpContext httpContext) =>
 {
-    if (false == UlrValidationService.isUrlValid(request.Url, UriKind.Absolute))
+    if (false == UlrValidationService.IsUrlValid(request.Url, UriKind.Absolute))
     {
         return Results.BadRequest("The specified URL is invalid: " + request.Url);
     }
@@ -62,17 +59,12 @@ app.MapPost("api/shorten", async (
     return Results.Ok(shortenedUrl.ShortUrl);
 });
 
-app.MapGet("api/{code}", async (string code, ApplicationDbContext dbContext) =>
+app.MapGet("api/{code}", async (string code, ApplicationDbContext dbContext, HttpResponse response) =>
 {
     var shortenedUrl = await dbContext.ShortenedUrls
-        .FirstOrDefaultAsync(s => s.Code == code);
+        .FirstOrDefaultAsync(s => s.Code.Equals(code));
 
-    if (shortenedUrl == null) 
-    {
-        return Results.NotFound();    
-    }
-
-    return Results.Redirect(shortenedUrl.LongUrl);
+    return shortenedUrl == null ? Results.NotFound() : Results.Redirect(shortenedUrl.LongUrl);
 });
 
 app.UseHttpsRedirection();
