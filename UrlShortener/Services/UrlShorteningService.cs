@@ -1,20 +1,23 @@
-﻿namespace UrlShortener.Services
+﻿using UrlShortener.Repositories.Interfaces;
+
+namespace UrlShortener.Services
 {
     using Constants;
     using Microsoft.EntityFrameworkCore;
+    using UrlShortener.Repositories.Implementations;
 
     public class UrlShorteningService
     {
         // For generating random url code
         private readonly Random _random = new();
 
-        // db context
-        private readonly ApplicationDbContext _dbContext;
+        // _dbContext context
+        private readonly IUnitOfWork _unitOfWork;
 
         // Constructor for DI
-        public UrlShorteningService(ApplicationDbContext context)
+        public UrlShorteningService(IUnitOfWork unitOfWork)
         {
-            this._dbContext = context;
+            this._unitOfWork = unitOfWork;
         }
 
         public async Task<string> GenerateUniqueCode()
@@ -34,7 +37,7 @@
                 string code = new string(codeChars);
 
                 // return the code if it is unique
-                if (false == await _dbContext.ShortenedUrls.AnyAsync(s => s.Code.Equals(code)))
+                if (await _unitOfWork.ShortenedUrlRepository.GetByCode(code) is null)
                 {
                     return code;
                 }

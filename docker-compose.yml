@@ -2,7 +2,7 @@ version: '3.4'
 
 services:
  sqldata:
-    container_name: sql-server-db
+    container_name: sql-server-_dbContext
     image: mcr.microsoft.com/mssql/server:latest
     environment:
       - SA_PASSWORD=StrongPassword123!

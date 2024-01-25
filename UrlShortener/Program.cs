@@ -17,7 +17,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ApplicationDbContext>(o =>
     o.UseSqlServer(builder.Configuration.GetConnectionString("Database")));
 
-builder.Services.AddScoped<UrlShorteningService>();
+builder.Services.AddRepositories();
+builder.Services.AddServices();
 
 var app = builder.Build();
 
