@@ -43,14 +43,13 @@ app.MapPost("api/shorten", async (
 
     var code = await urlShorteningService.GenerateUniqueCode();
 
-    var shortenedUrl = new ShortenedUrl
-    {
-        Id = Guid.NewGuid(),
-        LongUrl = request.Url,
-        Code = code,
-        ShortUrl = $"{httpContext.Request.Scheme}://{httpContext.Request.Host}/api/{code}",
-        CreatedOnUtc = DateTime.UtcNow
-    };
+    var shortenedUrl = new ShortenedUrl(
+        Guid.NewGuid(),
+        request.Url,
+        $"{httpContext.Request.Scheme}://{httpContext.Request.Host}/api/{code}",
+        code,
+        DateTime.UtcNow
+        );
 
     dbContext.ShortenedUrls.Add(shortenedUrl);
 
