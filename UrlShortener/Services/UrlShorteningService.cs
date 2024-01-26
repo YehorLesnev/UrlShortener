@@ -37,7 +37,7 @@ namespace UrlShortener.Services
                 string code = new string(codeChars);
 
                 // return the code if it is unique
-                if (await _unitOfWork.ShortenedUrlRepository.GetByCode(code) is null)
+                if (await _unitOfWork.ShortenedUrlRepository.GetByCodeAsync(code) is null)
                 {
                     return code;
                 }
