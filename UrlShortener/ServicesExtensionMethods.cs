@@ -17,12 +17,12 @@ namespace UrlShortener
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<ShortenedUrlRepository>();
             services.AddScoped<IShortenedUrlRepository, CachedShortenedUrlRepository>();
-            services.AddScoped<IMemoryCache, MemoryCache>();
         }
 
         public static void AddServices(this IServiceCollection services)
         {
             services.AddScoped<UrlShorteningService>();
+            services.AddSingleton<IMemoryCache, MemoryCache>();
         }
     }
 }
