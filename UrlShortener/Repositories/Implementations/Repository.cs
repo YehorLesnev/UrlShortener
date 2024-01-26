@@ -37,9 +37,11 @@ namespace UrlShortener.Repositories.Implementations
 
         public bool Any(Expression<Func<T, bool>> conditions) => MyDbSet.Any(conditions);
 
-        public async Task<T?> GetByIdAsync(int id) => await MyDbSet.FindAsync(id);
+        public async Task<T?> GetByIdAsync(Guid id, CancellationToken cancellationToken) => 
+             //await GetAll(u => u.Id ==  id).FirstOrDefaultAsync(cancellationToken);
+            await MyDbSet.FindAsync(id, cancellationToken);
 
-        public T? GetById(int id) => MyDbSet.Find(id);
+        public T? GetById(Guid id) => MyDbSet.Find(id);
 
         public void Insert(T record)
         {
@@ -90,16 +92,15 @@ namespace UrlShortener.Repositories.Implementations
             _dbContext.Remove(record);
         }
 
-        public async Task<bool> DeleteAsync(int id)
+        public async Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken)
         {
-            var record = await GetByIdAsync(id);
+            var record = await GetByIdAsync(id, cancellationToken);
 
             if (null == record) return false;
 
             _dbContext.Remove(record);
 
             return true;
-
         }
 
         public void DeleteRange(IEnumerable<T> entities)

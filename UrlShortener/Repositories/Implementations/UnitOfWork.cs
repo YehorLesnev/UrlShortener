@@ -2,34 +2,25 @@
 
 namespace UrlShortener.Repositories.Implementations
 {
-    public class UnitOfWork : IUnitOfWork
+    public class UnitOfWork(
+        ApplicationDbContext context,
+        IShortenedUrlRepository? shortenedUrlRepository)
+        : IUnitOfWork
     {
-        private readonly ApplicationDbContext _dbContext;
-
-        private IShortenedUrlRepository? _shortenedUrlRepository;
-        public IShortenedUrlRepository ShortenedUrlRepository => _shortenedUrlRepository ??= new ShortenedUrlRepository(_dbContext);
+        public IShortenedUrlRepository ShortenedUrlRepository => shortenedUrlRepository ??= new ShortenedUrlRepository(context);
 
         public void Commit()
         {
-            _dbContext.SaveChanges();
+            context.SaveChanges();
         }
 
         public async Task CommitAsync()
         {
-            await _dbContext.SaveChangesAsync();
+            await context.SaveChangesAsync();
         }
 
-        public UnitOfWork(ApplicationDbContext context)
+        public UnitOfWork(ApplicationDbContext context) : this(context, null)
         {
-            _dbContext = context;
-        }
-
-        public UnitOfWork(
-            ApplicationDbContext context,
-            IShortenedUrlRepository? shortenedUrlRepository)
-        {
-            _dbContext = context;
-            _shortenedUrlRepository = shortenedUrlRepository;
         }
     }
 }
