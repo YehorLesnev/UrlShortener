@@ -5,6 +5,8 @@ using UrlShortener;
 using UrlShortener.Entities;
 using UrlShortener.Extensions;
 using UrlShortener.Models;
+using UrlShortener.Repositories.Implementations;
+using UrlShortener.Repositories.Interfaces;
 using UrlShortener.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -34,7 +36,7 @@ app.ApplyMigrations();
 app.MapPost("api/shorten", async (
     ShortenUrlRequest request,
     UrlShorteningService urlShorteningService,
-    ApplicationDbContext dbContext,
+    IUnitOfWork unitOfWork,
     HttpContext httpContext) =>
 {
     if (false == UlrValidationService.IsUrlValid(request.Url, UriKind.Absolute))
@@ -52,17 +54,16 @@ app.MapPost("api/shorten", async (
         DateTime.UtcNow
         );
 
-    dbContext.ShortenedUrls.Add(shortenedUrl);
-
-    await dbContext.SaveChangesAsync();
+    unitOfWork.ShortenedUrlRepository.Insert( shortenedUrl );
+    
+    await unitOfWork.ShortenedUrlRepository.CommitAsync();
 
     return Results.Ok(shortenedUrl.ShortUrl);
 });
 
-app.MapGet("api/{code}", async (string code, ApplicationDbContext dbContext, HttpResponse response) =>
+app.MapGet("api/{code}", async (string code, IUnitOfWork unitOfWork, HttpResponse response) =>
 {
-    var shortenedUrl = await dbContext.ShortenedUrls
-        .FirstOrDefaultAsync(s => s.Code.Equals(code));
+    var shortenedUrl = await unitOfWork.ShortenedUrlRepository.GetByCodeAsync( code );
 
     return shortenedUrl == null ? Results.NotFound() : Results.Redirect(shortenedUrl.LongUrl);
 });

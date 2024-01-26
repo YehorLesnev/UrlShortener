@@ -37,9 +37,7 @@ namespace UrlShortener.Repositories.Implementations
 
         public bool Any(Expression<Func<T, bool>> conditions) => MyDbSet.Any(conditions);
 
-        public async Task<T?> GetByIdAsync(Guid id, CancellationToken cancellationToken) => 
-             //await GetAll(u => u.Id ==  id).FirstOrDefaultAsync(cancellationToken);
-            await MyDbSet.FindAsync(id, cancellationToken);
+        public async Task<T?> GetByIdAsync(Guid id, CancellationToken cancellationToken) => await MyDbSet.FindAsync(id, cancellationToken);
 
         public T? GetById(Guid id) => MyDbSet.Find(id);
 
