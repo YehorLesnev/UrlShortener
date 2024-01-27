@@ -1,15 +1,24 @@
-﻿using Microsoft.Extensions.Caching.Memory;
+﻿using Microsoft.EntityFrameworkCore.Storage.Json;
+using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Caching.Memory;
 using System.Linq.Expressions;
+using System.Text.Json.Serialization;
+using Newtonsoft.Json;
 using UrlShortener.Entities;
 using UrlShortener.Repositories.Implementations;
 using UrlShortener.Repositories.Interfaces;
 
 namespace UrlShortener.Repositories.CachedRepositoryDecorators
 {
-    public class CachedShortenedUrlRepository(ShortenedUrlRepository decorated, IMemoryCache memoryCache) : IShortenedUrlRepository
+    public class CachedShortenedUrlRepository(
+        ShortenedUrlRepository decorated, 
+        IDistributedCache distributedCache,
+        ApplicationDbContext dbContext
+        ) : IShortenedUrlRepository
     {
         private readonly ShortenedUrlRepository _decorated = decorated;
-        private readonly IMemoryCache _memoryCache = memoryCache;
+        private readonly IDistributedCache _distributedCache = distributedCache;
+        private readonly ApplicationDbContext _dbContext = dbContext;
 
         public IQueryable<ShortenedUrl> GetAll()
         {
@@ -41,18 +50,48 @@ namespace UrlShortener.Repositories.CachedRepositoryDecorators
             return _decorated.GetById(id);
         }
 
-        public Task<ShortenedUrl?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
+        public async Task<ShortenedUrl?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
         {
             string key = $"url-{id}";
 
-            return _memoryCache.GetOrCreateAsync(
+            // get value from cache
+            string? cachedUrl = await _distributedCache.GetStringAsync(
                 key,
-                entry =>
-                {
-                    entry.SetAbsoluteExpiration(TimeSpan.FromMinutes(3));
+                cancellationToken);
 
-                    return _decorated.GetByIdAsync(id, cancellationToken);
+            // if value is not present in cache
+            if (string.IsNullOrEmpty(cachedUrl))
+            {
+                ShortenedUrl? url = await _decorated.GetByIdAsync(id, cancellationToken);
+
+                if (url is null)
+                {
+                    return url;
+                }
+
+                // cache url in Redis
+                await _distributedCache.SetStringAsync(
+                    key,
+                    JsonConvert.SerializeObject(url),
+                    cancellationToken);
+
+                return url;
+            }
+
+            var urlFromCache = JsonConvert.DeserializeObject<ShortenedUrl>(
+                cachedUrl,
+                new JsonSerializerSettings()
+                {
+                    ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
+                    ContractResolver = new PrivateResolver()
                 });
+
+            if (urlFromCache is not null)
+            {
+                _dbContext.Set<ShortenedUrl>().Attach(urlFromCache);
+            }
+
+            return urlFromCache;
         }
 
         public void Insert(ShortenedUrl record)
@@ -105,32 +144,92 @@ namespace UrlShortener.Repositories.CachedRepositoryDecorators
             _decorated.Commit();
         }
 
-        public Task<ShortenedUrl?> GetByCodeAsync(string code, CancellationToken cancellationToken = default)
+        public async Task<ShortenedUrl?> GetByCodeAsync(string code, CancellationToken cancellationToken = default)
         {
             string key = $"url-{code}";
 
-            return _memoryCache.GetOrCreateAsync(
+            // get value from cache
+            string? cachedUrl = await _distributedCache.GetStringAsync(
                 key,
-                entry =>
-                {
-                    entry.SetAbsoluteExpiration(TimeSpan.FromMinutes(3));
+                cancellationToken);
 
-                    return _decorated.GetByCodeAsync(code, cancellationToken);
+            // if value is not present in cache
+            if (string.IsNullOrEmpty(cachedUrl))
+            {
+                ShortenedUrl? url = await _decorated.GetByCodeAsync(code, cancellationToken);
+
+                if (url is null)
+                {
+                    return url;
+                }
+
+                // cache url in Redis
+                await _distributedCache.SetStringAsync(
+                    key,
+                    JsonConvert.SerializeObject(url),
+                    cancellationToken);
+
+                return url;
+            }
+
+            var urlFromCache = JsonConvert.DeserializeObject<ShortenedUrl>(
+                cachedUrl,
+                new JsonSerializerSettings()
+                {
+                    ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
+                    ContractResolver = new PrivateResolver()
                 });
+
+            if (urlFromCache is not null)
+            {
+                _dbContext.Set<ShortenedUrl>().Attach(urlFromCache);
+            }
+
+            return urlFromCache;
         }
 
-        public Task<ShortenedUrl?> GetByLongUrlAsync(string longUrl, CancellationToken cancellationToken = default)
+        public async Task<ShortenedUrl?> GetByLongUrlAsync(string longUrl, CancellationToken cancellationToken = default)
         {
             string key = $"url-{longUrl}";
 
-            return _memoryCache.GetOrCreateAsync(
+            // get value from cache
+            string? cachedUrl = await _distributedCache.GetStringAsync(
                 key,
-                entry =>
-                {
-                    entry.SetAbsoluteExpiration(TimeSpan.FromMinutes(3));
+                cancellationToken);
 
-                    return _decorated.GetByCodeAsync(longUrl, cancellationToken);
+            // if value is not present in cache
+            if (string.IsNullOrEmpty(cachedUrl))
+            {
+                ShortenedUrl? url = await _decorated.GetByLongUrlAsync(longUrl, cancellationToken);
+
+                if (url is null)
+                {
+                    return url;
+                }
+
+                // cache url in Redis
+                await _distributedCache.SetStringAsync(
+                    key,
+                    JsonConvert.SerializeObject(url),
+                    cancellationToken);
+
+                return url;
+            }
+
+            var urlFromCache = JsonConvert.DeserializeObject<ShortenedUrl>(
+                cachedUrl,
+                new JsonSerializerSettings()
+                {
+                    ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
+                    ContractResolver = new PrivateResolver()
                 });
+
+            if (urlFromCache is not null)
+            {
+                _dbContext.Set<ShortenedUrl>().Attach(urlFromCache);
+            }
+
+            return urlFromCache;
         }
     }
 }

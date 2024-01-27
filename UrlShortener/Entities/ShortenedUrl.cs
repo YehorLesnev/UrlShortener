@@ -2,7 +2,7 @@
 
 namespace UrlShortener.Entities
 {
-    public sealed class ShortenedUrl(Guid id) : Entity(id)
+    public sealed class ShortenedUrl : Entity
     {
         public string LongUrl { get; set; } = string.Empty;
 
@@ -12,8 +12,12 @@ namespace UrlShortener.Entities
     
         public DateTime CreatedOnUtc { get; set; }
 
+        public ShortenedUrl(){ }
+
+        public ShortenedUrl(Guid id) : base(id) { }
+
         public ShortenedUrl(Guid id, string longUrl,  string shortUrl, string code,  DateTime createdOnUtc)
-            : this(id)
+            : base(id)
         {
             this.LongUrl = longUrl;
             this.ShortUrl = shortUrl;

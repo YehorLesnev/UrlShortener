@@ -22,6 +22,11 @@ builder.Services.AddDbContext<ApplicationDbContext>(o =>
 builder.Services.AddRepositories();
 builder.Services.AddServices();
 
+builder.Services.AddStackExchangeRedisCache(redisOptions =>
+{
+    redisOptions.Configuration = builder.Configuration.GetConnectionString("Redis");
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -54,8 +59,8 @@ app.MapPost("api/shorten", async (
         DateTime.UtcNow
         );
 
-    unitOfWork.ShortenedUrlRepository.Insert( shortenedUrl );
-    
+    unitOfWork.ShortenedUrlRepository.Insert(shortenedUrl);
+
     await unitOfWork.ShortenedUrlRepository.CommitAsync();
 
     return Results.Ok(shortenedUrl.ShortUrl);
@@ -63,7 +68,7 @@ app.MapPost("api/shorten", async (
 
 app.MapGet("api/{code}", async (string code, IUnitOfWork unitOfWork, HttpResponse response) =>
 {
-    var shortenedUrl = await unitOfWork.ShortenedUrlRepository.GetByCodeAsync( code );
+    var shortenedUrl = await unitOfWork.ShortenedUrlRepository.GetByCodeAsync(code);
 
     return shortenedUrl == null ? Results.NotFound() : Results.Redirect(shortenedUrl.LongUrl);
 });

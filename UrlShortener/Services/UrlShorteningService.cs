@@ -3,8 +3,6 @@
 namespace UrlShortener.Services
 {
     using Constants;
-    using Microsoft.EntityFrameworkCore;
-    using UrlShortener.Repositories.Implementations;
 
     public class UrlShorteningService
     {
