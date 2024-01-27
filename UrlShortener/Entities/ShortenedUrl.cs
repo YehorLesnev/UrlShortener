@@ -1,8 +1,12 @@
-﻿namespace UrlShortener.Entities
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace UrlShortener.Entities
 {
     public sealed class ShortenedUrl(Guid id) : Entity(id)
     {
         public string LongUrl { get; set; } = string.Empty;
+
+        [MaxLength(Constants.Constants.MaxLengthOfShortenedUrl)]
         public string ShortUrl { get; set; } = string.Empty;
         public string Code { get; set; } = string.Empty;
     

@@ -3,6 +3,7 @@
     public class Constants
     {
         public const int NumberOfCharsInShortLink = 7;
+        public const int MaxLengthOfShortenedUrl = 25;
         public const string Alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     }
 }

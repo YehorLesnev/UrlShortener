@@ -23,6 +23,8 @@ namespace UrlShortener
                 builder.Property(s => s.Code).HasMaxLength(Constants.Constants.NumberOfCharsInShortLink);
                 builder.HasIndex(s => s.Code).IsUnique();
 
+                builder.Property(s => s.ShortUrl).HasMaxLength(Constants.Constants.MaxLengthOfShortenedUrl);
+
                 builder.Property(s => s.Code).UseCollation("SQL_Latin1_General_CP1_CS_AS");
                 builder.Property(s => s.ShortUrl).UseCollation("SQL_Latin1_General_CP1_CS_AS");
                 builder.Property(s => s.LongUrl).UseCollation("SQL_Latin1_General_CP1_CS_AS");
