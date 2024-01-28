@@ -1,4 +1,6 @@
+using System.Reflection;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 using UrlShortener;
 using UrlShortener.Endpoints;
 using UrlShortener.Extensions;
@@ -9,7 +11,31 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(
+    swaggerOptions =>
+{
+    swaggerOptions.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+    {
+        Title = "UrlShortener API",
+        Description = "An ASP.NET Core Web API",
+        Version = "1.0",
+
+        Contact = new OpenApiContact
+        {
+            Name = "LinkedIn - Yehor Lesnevych",
+            Url = new Uri("https://www.linkedin.com/in/yehor-lesnevych-130640158/")
+        },
+
+        License = new OpenApiLicense
+        {
+            Name = "GitHub - Yehor Lesnev",
+            Url = new Uri("https://github.com/YehorLesnev")
+        }
+    });
+
+    var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    swaggerOptions.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+});
 
 builder.Services.AddDbContext<ApplicationDbContext>(o =>
     o.UseSqlServer(builder.Configuration.GetConnectionString("Database")));
