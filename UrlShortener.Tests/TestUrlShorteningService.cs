@@ -5,6 +5,7 @@ using UrlShortener.Entities;
 using UrlShortener.Repositories.Implementations;
 using UrlShortener.Repositories.Interfaces;
 using UrlShortener.Services;
+using UrlShortener.Services.Static;
 
 namespace UrlShortener.Tests
 {
@@ -34,7 +35,7 @@ namespace UrlShortener.Tests
 
             // Assert
             Assert.IsNotNull(code);
-            Assert.IsTrue(code.Length == Constants.Constants.NumberOfCharsInShortLink);
+            Assert.IsTrue(code.Length == Constants.Constants.NumberOfCharsInShortLinkCode);
             Assert.IsFalse(existingCodes.Contains(code));
         }
     }

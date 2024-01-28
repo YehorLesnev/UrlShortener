@@ -5,6 +5,7 @@ using UrlShortener.Repositories.CachedRepositoryDecorators;
 using UrlShortener.Repositories.Implementations;
 using UrlShortener.Repositories.Interfaces;
 using UrlShortener.Services;
+using UrlShortener.Services.Static;
 
 namespace UrlShortener
 {

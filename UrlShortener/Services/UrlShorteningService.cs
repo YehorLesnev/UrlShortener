@@ -2,8 +2,6 @@
 
 namespace UrlShortener.Services
 {
-    using Constants;
-
     public class UrlShorteningService
     {
         // For generating random url code
@@ -20,16 +18,16 @@ namespace UrlShortener.Services
 
         public async Task<string> GenerateUniqueCode()
         {
-            var codeChars = new char[Constants.NumberOfCharsInShortLink];
-            int alphabetLength = Constants.Alphabet.Length;
+            var codeChars = new char[Constants.Constants.NumberOfCharsInShortLinkCode];
+            int alphabetLength = Constants.Constants.Alphabet.Length;
 
             while (true)
             {
-                for (int i = 0; i < Constants.NumberOfCharsInShortLink; ++i)
+                for (int i = 0; i < Constants.Constants.NumberOfCharsInShortLinkCode; ++i)
                 {
                     int randomIndex = _random.Next(alphabetLength);
 
-                    codeChars[i] = Constants.Alphabet[randomIndex];
+                    codeChars[i] = Constants.Constants.Alphabet[randomIndex];
                 }
 
                 string code = new string(codeChars);

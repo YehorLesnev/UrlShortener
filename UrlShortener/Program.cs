@@ -1,13 +1,16 @@
 using Azure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection.Metadata;
 using UrlShortener;
+using UrlShortener.Constants;
 using UrlShortener.Entities;
 using UrlShortener.Extensions;
 using UrlShortener.Models;
 using UrlShortener.Repositories.Implementations;
 using UrlShortener.Repositories.Interfaces;
 using UrlShortener.Services;
+using UrlShortener.Services.Static;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -68,9 +71,14 @@ app.MapPost("api/shorten", async (
 
 app.MapGet("api/{code}", async (string code, IUnitOfWork unitOfWork, HttpResponse response) =>
 {
+    if(false == ShortenedUrlCodeValidatorService.IsCodeValid(code)) 
+    {
+        return Results.BadRequest(Constants.InvalidCodeBadRequestMessage);
+    }
+
     var shortenedUrl = await unitOfWork.ShortenedUrlRepository.GetByCodeAsync(code);
 
-    return shortenedUrl == null ? Results.NotFound() : Results.Redirect(shortenedUrl.LongUrl);
+    return shortenedUrl is null ? Results.NotFound() : Results.Redirect(shortenedUrl.LongUrl);
 });
 
 app.UseHttpsRedirection();

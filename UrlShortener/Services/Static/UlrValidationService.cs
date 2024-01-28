@@ -1,8 +1,6 @@
-﻿using Azure.Core;
-
-namespace UrlShortener.Services
+﻿namespace UrlShortener.Services.Static
 {
-    public class UlrValidationService
+    public static class UlrValidationService
     {
         public static bool IsUrlValid(string url, UriKind urlKind)
         {
