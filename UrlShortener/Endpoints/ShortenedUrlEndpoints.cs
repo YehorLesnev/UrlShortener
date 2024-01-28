@@ -84,7 +84,7 @@ namespace UrlShortener.Endpoints
         ///     GET /api/Fy91MNr
         ///     
         /// </remarks>
-        /// <param name="code">code of the shortened url</param>
+        /// <param name="code">Code of the shortened url</param>
         /// <returns> This endpoint redirects to original link by code.</returns>
         /// <response code="200">Success</response>
         /// <response code="400">The code is invalid or contains forbidden characters</response>
