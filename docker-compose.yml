@@ -27,3 +27,9 @@ services:
         - ~/.aspnet/https:/https
     depends_on:
       - sqldata
+
+ redis:
+    image: redis:latest
+    ports:
+    - "6379:6379"
+    container_name: redis

@@ -25,7 +25,7 @@ builder.Services.AddStackExchangeRedisCache(redisOptions =>
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment() || app.Environment.IsEnvironment("Development_Docker"))
 {
     app.UseSwagger();
     app.UseSwaggerUI();
