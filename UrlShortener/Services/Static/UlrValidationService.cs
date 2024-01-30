@@ -4,7 +4,12 @@
     {
         public static bool IsUrlValid(string url, UriKind urlKind)
         {
-            return Uri.TryCreate(url, urlKind, out _);
+            if(Uri.TryCreate(url, urlKind, out var result))
+            {
+                return result.Scheme is "https" or "http";
+            }
+
+            return false;
         }
     }
 }

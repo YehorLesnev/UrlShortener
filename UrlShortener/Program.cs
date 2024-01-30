@@ -63,5 +63,11 @@ app.ApplyMigrations();
 app.MapShortenedUrlRoutes();
 
 app.UseHttpsRedirection();
-app.UseCors();
+app.UseCors(c =>
+{
+    c.AllowAnyOrigin()
+    .AllowAnyHeader()
+    .AllowAnyMethod();
+});
+
 app.Run();

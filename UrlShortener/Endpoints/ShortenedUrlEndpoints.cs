@@ -50,7 +50,7 @@ namespace UrlShortener.Endpoints
         {
             if (false == UlrValidationService.IsUrlValid(request.Url, UriKind.Absolute))
             {
-                return Results.BadRequest("The specified URL is invalid: " + request.Url);
+                return Results.BadRequest(Constants.Constants.InvalidUrlBadRequestMessage);
             }
 
             var code = await urlShorteningService.GenerateUniqueCode();
